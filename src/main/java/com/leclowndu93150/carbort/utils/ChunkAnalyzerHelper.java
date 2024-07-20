@@ -6,11 +6,18 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.phys.AABB;
+import net.neoforged.neoforge.common.extensions.IEntityExtension;
+
+import java.util.List;
 
 public class ChunkAnalyzerHelper {
     public Player player;
@@ -46,5 +53,27 @@ public class ChunkAnalyzerHelper {
             }
         }
         return blocks;
+    }
+    public Object2IntMap<LivingEntity> scanEntities() {
+        Object2IntMap<LivingEntity> entities = new Object2IntOpenHashMap<>();
+        ChunkAccess chunkAccess = level.getChunk(player.getOnPos());
+
+
+        int chunkMinX = chunkAccess.getPos().getMinBlockX();
+        int chunkMinZ = chunkAccess.getPos().getMinBlockZ();
+        int chunkMaxX = chunkAccess.getPos().getMaxBlockX();
+        int chunkMaxZ = chunkAccess.getPos().getMaxBlockZ();
+        AABB chunkBounds = new AABB(chunkMinX, level.getMinBuildHeight(), chunkMinZ, chunkMaxX + 1, level.getMaxBuildHeight(), chunkMaxZ + 1);
+
+        // Iterate over all entities within the chunk bounds
+        for (Entity entity : level.getEntities(null, chunkBounds)) {
+            if (entity instanceof LivingEntity) {
+                LivingEntity livingEntity = (LivingEntity) entity;
+                entities.put(livingEntity, entities.getInt(livingEntity) + 1);
+            }
+
+        }
+
+        return entities;
     }
 }

@@ -11,6 +11,8 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -25,6 +27,8 @@ public class ChunkAnalyzerScreen extends AbstractContainerScreen<ChunkAnalyzerMe
     private boolean notEnoughEnergy;
     private List<Block> blocks;
     private List<Integer> amounts;
+    private List<? extends EntityType<?>> entities;
+    private List<Integer> entityamounts;
 
     private int imageWidth;
     private int imageHeight;
@@ -48,6 +52,10 @@ public class ChunkAnalyzerScreen extends AbstractContainerScreen<ChunkAnalyzerMe
         this.blocks = blocks.stream().map(BuiltInRegistries.BLOCK::byId).toList();
         this.amounts = amounts;
     }
+    public void setEntities(List<Integer> entities, List<Integer> amounts) {
+        this.entities = entities.stream().map(BuiltInRegistries.ENTITY_TYPE::byId).toList();
+        this.entityamounts = amounts;
+    }
 
     @Override
     protected void init() {
@@ -62,14 +70,19 @@ public class ChunkAnalyzerScreen extends AbstractContainerScreen<ChunkAnalyzerMe
 
         addDataPanel();
         setPanelBlocks();
+        setPanelEntities();
         addScanButton(btnX, y);
         addRenderableWidget(this.dataPanel);
     }
 
     private void setPanelBlocks() {
         this.dataPanel.setBlocksAndAmounts(this.blocks, this.amounts);
+        this.dataPanel.setBlocksAndAmounts(this.blocks, this.amounts);
     }
-
+    private void setPanelEntities() {
+        this.dataPanel.setEntitiesAndAmounts(this.entities, this.amounts);
+        this.dataPanel.setEntitiesAndAmounts(this.entities, this.amounts);
+    }
     private void addDataPanel() {
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;

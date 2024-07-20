@@ -4,7 +4,6 @@ import com.leclowndu93150.carbort.Carbort;
 import com.leclowndu93150.carbort.common.items.ChunkAnalyzerItem;
 import com.leclowndu93150.carbort.common.items.HealingAxeItem;
 import com.leclowndu93150.carbort.common.items.PartyPickaxeItem;
-import com.leclowndu93150.carbort.common.items.UnstableIngotItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
@@ -30,6 +29,4 @@ public class ItemRegistry {
                     .stacksTo(1)
                     .rarity(Rarity.RARE)
                     .component(DataComponentRegistry.ENERGY_STORAGE, 0)));
-
-    public static final DeferredItem<Item> UNSTABLE_INGOT = ITEMS.register("unstable_ingot", () -> new UnstableIngotItem(new Item.Properties()));
 }

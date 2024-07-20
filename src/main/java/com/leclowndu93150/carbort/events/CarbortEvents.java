@@ -4,22 +4,16 @@ import com.leclowndu93150.carbort.Carbort;
 import com.leclowndu93150.carbort.common.energy.ItemStackEnergyStorage;
 import com.leclowndu93150.carbort.common.items.HealingAxeItem;
 import com.leclowndu93150.carbort.common.energy.IEnergyItem;
-import com.leclowndu93150.carbort.common.items.UnstableIngotItem;
 import com.leclowndu93150.carbort.common.screen.ChunkAnalyzerScreen;
 import com.leclowndu93150.carbort.networking.ChunkAnalyzerDataPayload;
 import com.leclowndu93150.carbort.networking.ChunkAnalyzerTogglePayload;
 import com.leclowndu93150.carbort.networking.PayloadActions;
-import com.leclowndu93150.carbort.registry.DataComponentRegistry;
-import com.leclowndu93150.carbort.registry.ItemRegistry;
 import com.leclowndu93150.carbort.registry.MenuRegistry;
-import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -27,7 +21,6 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
@@ -74,20 +67,5 @@ public class CarbortEvents {
         public static void onClientSetup(RegisterMenuScreensEvent event) {
             event.register(MenuRegistry.CHUNK_ANALYZER_MENU.get(), ChunkAnalyzerScreen::new);
         }
-
-
-        /*
-        @SubscribeEvent
-        public static void unstableIngotCrafted(PlayerEvent.ItemCraftedEvent event) {
-            if(event.getCrafting().is(ItemRegistry.UNSTABLE_INGOT)){
-                Inventory inventory = event.getEntity().getInventory();
-                for (ItemStack item : inventory.items) {
-                    if (item.is(ItemRegistry.UNSTABLE_INGOT) && !item.has(DataComponentRegistry.TIMER)) {
-                        item.set(DataComponentRegistry.TIMER, 200);
-                    }
-                }
-            }
-        }
-         */
     }
 }

@@ -4,13 +4,17 @@ import com.leclowndu93150.carbort.CarbortConfig;
 import com.leclowndu93150.carbort.common.energy.IEnergyItem;
 import com.leclowndu93150.carbort.common.screen.ChunkAnalyzerMenu;
 import com.leclowndu93150.carbort.common.screen.ChunkAnalyzerScreen;
+import com.leclowndu93150.carbort.networking.PayloadActions;
 import com.leclowndu93150.carbort.registry.DataComponentRegistry;
 import com.leclowndu93150.carbort.utils.CapabilityUtils;
+import com.leclowndu93150.carbort.utils.ChunkAnalyzerHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -23,11 +27,12 @@ import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public class ChunkAnalyzerItem extends Item implements IEnergyItem, MenuProvider {
     public ChunkAnalyzerItem(Properties properties) {
         super(properties);
     }
-
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
         player.openMenu(this);

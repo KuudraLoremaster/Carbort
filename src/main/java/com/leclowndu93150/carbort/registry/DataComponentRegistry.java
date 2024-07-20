@@ -16,7 +16,4 @@ public class DataComponentRegistry {
 
     public static final Supplier<DataComponentType<Integer>> ENERGY_STORAGE = DATA_COMPONENTS.register("energy",
             () -> DataComponentType.<Integer>builder().persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT).build());
-
-    public static final Supplier<DataComponentType<Integer>> TIMER = DATA_COMPONENTS.register("timer",
-            () -> DataComponentType.<Integer>builder().persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT).build());
 }
