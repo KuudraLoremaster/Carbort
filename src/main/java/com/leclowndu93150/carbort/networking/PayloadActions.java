@@ -13,21 +13,25 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.chat.report.ReportEnvironment;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.TickTask;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.entity.monster.Skeleton;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -35,10 +39,7 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -58,16 +59,26 @@ public final class PayloadActions {
                         energyStorage.extractEnergy(CarbortConfig.chunkAnalyzerEnergyUsage, false);
                         PacketDistributor.sendToPlayer(serverPlayer, new ChunkAnalyzerTogglePayload((byte) 1));
                         Map<Class<? extends Entity>, EntityType<?>> entityTypeMap = new HashMap<>();
-                        for (Field field : EntityType.class.getDeclaredFields()) {
-                            if (EntityType.class.isAssignableFrom(field.getType())) {
-                                try {
-                                    EntityType<?> entityType = (EntityType<?>) field.get(null);
-                                    entityTypeMap.put(entityType.getBaseClass(), entityType);
-                                } catch (IllegalAccessException e) {
-                                    e.printStackTrace();
+                        Set<Class<? extends Entity>> entityClasses = new HashSet<>();
+                        DefaultedRegistry<EntityType<?>> entityRegistry = BuiltInRegistries.ENTITY_TYPE;
+                        for (EntityType<?> entityType : entityRegistry) {
+                            try {
+                                // Create an instance of the entity (null may be required for the world context)
+                                Entity entityInstance = entityType.create(player.level()); // You might need a valid Level if required
+                                if (entityInstance != null) {
+                                    entityClasses.add(entityInstance.getClass());
+                                    player.sendSystemMessage(Component.literal("" + entityInstance));
+                                    entityTypeMap.put(entityInstance.getClass(), entityInstance.getType());
+
                                 }
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
-                        }
+                        };
+
+                        entityTypeMap.forEach((entityClass, entityType) -> {
+                            player.sendSystemMessage(Component.literal("Mapped: " + entityClass.getName(    ) + " to " + entityType));
+                        });
                         List<Integer> blocks1 = blocks.keySet()
                                 .stream()
                                 .map(BuiltInRegistries.BLOCK::getId)
@@ -75,14 +86,21 @@ public final class PayloadActions {
 
                         List<Integer> entities1 = entities.keySet()
                                 .stream()
+                                .filter(entityClass ->
+                                        !(Player.class.isAssignableFrom(entityClass.getClass()) ||
+                                                ServerPlayer.class.isAssignableFrom(entityClass.getClass()) ||
+                                                LocalPlayer.class.isAssignableFrom(entityClass.getClass())))
                                 .map(entityClass -> {
                                     EntityType<?> entityType = entityTypeMap.get(entityClass);
+
                                     if (entityType != null) {
                                         return BuiltInRegistries.ENTITY_TYPE.getId(entityType);
                                     } else {
-                                        throw new IllegalArgumentException("No EntityType found for class: " + entityClass.getName());
+                                        ((ServerPlayer) player).sendSystemMessage(Component.literal("No EntityType found for class: " + entityClass.getName()));
+                                        return null;
                                     }
                                 })
+                                .filter(id -> id != null)
                                 .collect(Collectors.toList());
                         ChunkAnalyzerDataPayload payload1 = new ChunkAnalyzerDataPayload(blocks1, blocks.values().stream().toList(), entities1, entities.values().stream().toList());
                         PacketDistributor.sendToPlayer(serverPlayer, payload1);
