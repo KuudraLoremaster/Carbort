@@ -77,7 +77,7 @@ public final class PayloadActions {
                         };
 
                         entityTypeMap.forEach((entityClass, entityType) -> {
-                            player.sendSystemMessage(Component.literal("Mapped: " + entityClass.getName(    ) + " to " + entityType));
+                            player.sendSystemMessage(Component.literal("Mapped: " + entityClass.getName() + " to " + entityType));
                         });
                         List<Integer> blocks1 = blocks.keySet()
                                 .stream()
@@ -91,10 +91,12 @@ public final class PayloadActions {
                                                 ServerPlayer.class.isAssignableFrom(entityClass.getClass()) ||
                                                 LocalPlayer.class.isAssignableFrom(entityClass.getClass())))
                                 .map(entityClass -> {
-                                    EntityType<?> entityType = entityTypeMap.get(entityClass);
-
+                                    player.sendSystemMessage(Component.literal("" + entityClass.getClass()));
+                                    EntityType<?> entityType = entityTypeMap.get(entityClass.getClass());
                                     if (entityType != null) {
-                                        return BuiltInRegistries.ENTITY_TYPE.getId(entityType);
+                                        Entity entityInstance = entityType.create(player.level()); // You might need a valid Level if required
+                                        player.sendSystemMessage(Component.literal("if you get this message it should work"));
+                                        return BuiltInRegistries.ENTITY_TYPE.getId(entityInstance.getType());
                                     } else {
                                         ((ServerPlayer) player).sendSystemMessage(Component.literal("No EntityType found for class: " + entityClass.getName()));
                                         return null;
