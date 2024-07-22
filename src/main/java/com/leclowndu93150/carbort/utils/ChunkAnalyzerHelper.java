@@ -1,13 +1,10 @@
 package com.leclowndu93150.carbort.utils;
 
 import com.leclowndu93150.carbort.Carbort;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -15,9 +12,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.common.extensions.IEntityExtension;
-
-import java.util.List;
 
 public class ChunkAnalyzerHelper {
     public Player player;
@@ -28,7 +22,7 @@ public class ChunkAnalyzerHelper {
         this.level = level;
     }
 
-    public Object2IntMap<Block> scan() {
+    public Object2IntMap<Block> scanBlocks() {
         Object2IntMap<Block> blocks = new Object2IntOpenHashMap<>();
         ChunkAccess chunkAccess = level.getChunk(player.getOnPos());
         int initZ = chunkAccess.getPos().getMinBlockZ();
@@ -54,21 +48,19 @@ public class ChunkAnalyzerHelper {
         }
         return blocks;
     }
-    public Object2IntMap<LivingEntity> scanEntities() {
+    public Object2IntMap<LivingEntity> scanEntities(Player player) {
         Object2IntMap<LivingEntity> entities = new Object2IntOpenHashMap<>();
         ChunkAccess chunkAccess = level.getChunk(player.getOnPos());
 
-
         int chunkMinX = chunkAccess.getPos().getMinBlockX();
         int chunkMinZ = chunkAccess.getPos().getMinBlockZ();
-        int chunkMaxX = chunkAccess.getPos().getMaxBlockX();
-        int chunkMaxZ = chunkAccess.getPos().getMaxBlockZ();
-        AABB chunkBounds = new AABB(chunkMinX, level.getMinBuildHeight(), chunkMinZ, chunkMaxX + 1, level.getMaxBuildHeight(), chunkMaxZ + 1);
+        int chunkMaxX = chunkMinX + 16;
+        int chunkMaxZ = chunkMinZ + 16;
+        AABB chunkBounds = new AABB(chunkMinX, level.getMinBuildHeight(), chunkMinZ, chunkMaxX, level.getMaxBuildHeight(), chunkMaxZ);
 
         // Iterate over all entities within the chunk bounds
-        for (Entity entity : level.getEntities(null, chunkBounds)) {
-            if (entity instanceof LivingEntity) {
-                LivingEntity livingEntity = (LivingEntity) entity;
+        for (Entity entity : level.getEntities(player, chunkBounds)) {
+            if (entity instanceof LivingEntity livingEntity) {
                 entities.put(livingEntity, entities.getInt(livingEntity) + 1);
             }
 

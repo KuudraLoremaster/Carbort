@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
 
-public record ChunkAnalyzerDataPayload(List<Integer> blocks, List<Integer> amounts, List<Integer> entities, List<Integer> entityamount) implements CustomPacketPayload {
+public record ChunkAnalyzerDataPayload(List<Integer> blocks, List<Integer> amounts, List<Integer> entities, List<Integer> entityAmounts) implements CustomPacketPayload {
     public static final Type<ChunkAnalyzerDataPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Carbort.MODID, "ca_data_payload"));
     public static final StreamCodec<RegistryFriendlyByteBuf, ChunkAnalyzerDataPayload> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.INT.apply(ByteBufCodecs.list()),
@@ -19,7 +19,7 @@ public record ChunkAnalyzerDataPayload(List<Integer> blocks, List<Integer> amoun
             ByteBufCodecs.INT.apply(ByteBufCodecs.list()),
             ChunkAnalyzerDataPayload::entities,
             ByteBufCodecs.INT.apply(ByteBufCodecs.list()),
-            ChunkAnalyzerDataPayload::entityamount,
+            ChunkAnalyzerDataPayload::entityAmounts,
             ChunkAnalyzerDataPayload::new
     );
 

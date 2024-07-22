@@ -4,6 +4,7 @@ import com.leclowndu93150.carbort.Carbort;
 import com.leclowndu93150.carbort.common.items.ChunkAnalyzerItem;
 import com.leclowndu93150.carbort.common.items.HealingAxeItem;
 import com.leclowndu93150.carbort.common.items.PartyPickaxeItem;
+import com.leclowndu93150.carbort.common.items.TestItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
@@ -19,6 +20,8 @@ public class ItemRegistry {
     public static final DeferredItem<Item> PARTY_PICKAXE = ITEMS.register("party_pickaxe", () -> new PartyPickaxeItem(new Item.Properties()));
 
     public static final DeferredItem<Item> TORMENTED_SOUL = ITEMS.register("tormented_soul", () -> new Item(new Item.Properties()));
+
+    public static final DeferredItem<Item> TEST_ITEM = ITEMS.register("test_item", () -> new TestItem(new Item.Properties()));
 
     public static final DeferredItem<Item> HEALING_AXE = ITEMS.register("healing_axe", () -> new HealingAxeItem(new Item.Properties()));
 

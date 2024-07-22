@@ -77,12 +77,12 @@ public class ChunkAnalyzerScreen extends AbstractContainerScreen<ChunkAnalyzerMe
 
     private void setPanelBlocks() {
         this.dataPanel.setBlocksAndAmounts(this.blocks, this.amounts);
-        this.dataPanel.setBlocksAndAmounts(this.blocks, this.amounts);
     }
+
     private void setPanelEntities() {
-        this.dataPanel.setEntitiesAndAmounts(this.entities, this.amounts);
-        this.dataPanel.setEntitiesAndAmounts(this.entities, this.amounts);
+        this.dataPanel.setEntitiesAndAmounts(this.entities, this.entityamounts);
     }
+
     private void addDataPanel() {
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;
@@ -112,6 +112,7 @@ public class ChunkAnalyzerScreen extends AbstractContainerScreen<ChunkAnalyzerMe
     protected void containerTick() {
         super.containerTick();
         setPanelBlocks();
+        setPanelEntities();
         int btnX = (width + imageWidth) / 2 - 32;
         int y = (height - imageHeight) / 2;
         addScanButton(btnX, y);
